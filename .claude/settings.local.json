@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx --yes playwright --version)",
+      "Bash(node -e \"require.resolve\\('playwright'\\)\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\ELITEB~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-EliteBook-OneDrive-Desktop-continutyos-app\\\\bf4ddf9b-5bf4-435f-871c-365563af66d4\\\\scratchpad\\\\pw\")",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Read(//tmp/**)",
+      "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 5174 -State Listen | Select-Object -ExpandProperty OwningProcess\")",
+      "Bash(powershell -Command \"Get-Process node -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,StartTime\")",
+      "Bash(powershell -NoProfile -Command \"Get-NetTCPConnection -LocalPort 5173,5174 -State Listen -ErrorAction SilentlyContinue | Select-Object LocalPort,OwningProcess\")"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5174 --max-time 2)",
+      "Bash(node verify5.js)",
+      "Bash(node debug5.js)",
+      "Bash(curl -s http://localhost:5173/src/index.css --max-time 5)",
+      "Bash(curl -s \"http://localhost:5173/@id/__x00__virtual:tailwindcss/index.css\" --max-time 5)",
+      "Bash(node debug5b.js)",
+      "Bash(node debug5c.js)",
+      "Bash(curl -s -o /dev/null -w \"5173: %{http_code}\\\\n\" http://localhost:5173 --max-time 3)",
+      "Bash(curl -s -o /dev/null -w \"5174: %{http_code}\\\\n\" http://localhost:5174 --max-time 3)",
+      "Bash(node verify-color.js)",
+      "Bash(node verify-tracker.js)",
+      "Bash(node verify-tracker2.js)"
+    ]
+  }
+}
