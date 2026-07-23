@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Badge } from '../components/Badge'
 import { SyncStatus } from '../components/SyncStatus'
+import { TeamPresence } from '../components/TeamPresence'
 import { Countdown } from '../components/Countdown'
 import { Toast } from '../components/Toast'
 import { ActivityTicker } from '../components/ActivityTicker'
@@ -80,9 +81,11 @@ export function Incidents() {
       <Toast message="⚠ Crestline Logistics: update now overdue — auto-escalated" visible={toastVisible} />
 
       <div>
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-semibold text-navy">Incident Success Room</h1>
           <SyncStatus />
+          <span className="h-4 w-px bg-navy/10" />
+          <TeamPresence />
         </div>
         <p className="mt-1.5 text-sm text-navy/60">
           {totalAccounts} enterprise/business accounts · {resolvedCount} resolved · {openCount} open ·{' '}

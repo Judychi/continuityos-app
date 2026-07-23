@@ -171,6 +171,65 @@ function AccountSkeleton() {
   )
 }
 
+function ContactSkeleton() {
+  return (
+    <div className="mx-auto max-w-2xl animate-pulse space-y-6">
+      <div className="space-y-2">
+        <Block className="h-7 w-56 rounded-md" />
+        <Block className="h-4 w-72 rounded-md" />
+      </div>
+
+      <div className="space-y-3 rounded-2xl border border-navy/10 bg-white p-6 shadow-sm">
+        <div className="flex items-center gap-3">
+          <Block className="h-12 w-12 rounded-full" />
+          <div className="space-y-1.5">
+            <Block className="h-4 w-24 rounded-md" />
+            <Block className="h-3 w-32 rounded-md" />
+          </div>
+        </div>
+        <Block className="h-3 w-56 rounded-md" />
+      </div>
+
+      <div className="space-y-4 rounded-2xl border border-navy/10 bg-white p-6 shadow-sm">
+        <Block className="h-9 w-full rounded-xl" />
+        <Block className="h-28 w-full rounded-xl" />
+        <Block className="h-10 w-32 rounded-xl" />
+      </div>
+    </div>
+  )
+}
+
+function SelfServiceSkeleton() {
+  return (
+    <div className="mx-auto max-w-3xl animate-pulse space-y-6">
+      <div className="space-y-2">
+        <Block className="h-7 w-48 rounded-md" />
+        <Block className="h-4 w-80 rounded-md" />
+      </div>
+
+      <div className="space-y-4 rounded-2xl border border-navy/10 bg-white p-6 shadow-sm">
+        <div className="flex items-center justify-between">
+          <Block className="h-5 w-32 rounded-md" />
+          <Block className="h-5 w-24 rounded-full" />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Block className="h-10 w-full rounded-md" />
+          <Block className="h-10 w-full rounded-md" />
+        </div>
+      </div>
+
+      <div className="space-y-3 rounded-2xl border border-navy/10 bg-white p-6 shadow-sm">
+        <Block className="h-4 w-56 rounded-md" />
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Block key={i} className="h-9 w-full rounded-md" />
+        ))}
+      </div>
+
+      <Block className="h-24 w-full rounded-2xl" />
+    </div>
+  )
+}
+
 function DefaultSkeleton() {
   return (
     <div className="mx-auto max-w-4xl animate-pulse space-y-6">
@@ -186,5 +245,7 @@ export function PageSkeleton({ pathname }: { pathname: string }) {
   if (pathname === '/status') return <StatusHubSkeleton />
   if (pathname === '/account') return <AccountSkeleton />
   if (pathname === '/incidents/rn-4821') return <CaseDetailSkeleton />
+  if (pathname === '/contact') return <ContactSkeleton />
+  if (pathname === '/self-service') return <SelfServiceSkeleton />
   return <DefaultSkeleton />
 }
