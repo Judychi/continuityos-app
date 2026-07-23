@@ -60,7 +60,7 @@ export function StatusHub() {
         </div>
         <div className="rounded-2xl border border-navy/10 bg-white p-5 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wide text-navy/40">Case owner</p>
-          <p className="mt-1.5 text-sm font-semibold text-navy">Amara O.</p>
+          <p className="mt-1.5 text-sm font-semibold text-navy">Judith C.</p>
         </div>
       </div>
 

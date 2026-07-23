@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Badge } from '../components/Badge'
 import { Modal } from '../components/Modal'
+import { PresenceIndicator } from '../components/PresenceIndicator'
 import { CaseProgress } from '../components/CaseProgress'
 import { DocumentChecklist } from '../components/DocumentChecklist'
 import { UpdateHistory } from '../components/UpdateHistory'
@@ -46,15 +47,18 @@ export function CaseDetail() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
-      <div>
-        <div className="flex flex-wrap items-center gap-2.5">
-          <h1 className="text-2xl font-semibold text-navy">Case #RN-4821 — PeopleGrid Africa</h1>
-          <Badge tone="navy">Internal case detail</Badge>
-          {caseResolved && <Badge tone="green">Resolved</Badge>}
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-2xl font-semibold text-navy">Case #RN-4821 — PeopleGrid Africa</h1>
+            <Badge tone="navy">Internal case detail</Badge>
+            {caseResolved && <Badge tone="green">Resolved</Badge>}
+          </div>
+          <Link to="/incidents" className="mt-1.5 inline-block text-sm text-teal hover:underline">
+            ← Back to Incident Success Room
+          </Link>
         </div>
-        <Link to="/incidents" className="mt-1.5 inline-block text-sm text-teal hover:underline">
-          ← Back to Incident Success Room
-        </Link>
+        <PresenceIndicator />
       </div>
 
       <CaseProgress steps={steps} stageLabel={getStageLabel(caseResolved)} />

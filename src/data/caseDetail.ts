@@ -33,7 +33,7 @@ const baseHistory = [
   {
     timestamp: 'Wed, Jul 22 · 10:05 AM',
     title: 'Compliance review started',
-    detail: 'Source-of-funds statement moved to compliance for review. Amara O. assigned as case owner.',
+    detail: 'Source-of-funds statement moved to compliance for review. Judith C. assigned as case owner.',
   },
 ]
 
@@ -58,6 +58,6 @@ export const resolutionLetter = {
     'Thank you for your patience and cooperation throughout this review. Should you have any questions, please do not hesitate to reach out to your dedicated success manager.',
   ],
   signOff: 'Sincerely,',
-  signature: 'Amara O.',
+  signature: 'Judith C.',
   signatureTitle: 'Enterprise Success Manager, ContinuityCX Technologies',
 }

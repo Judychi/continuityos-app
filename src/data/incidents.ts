@@ -17,7 +17,7 @@ export const incidentRows: IncidentRow[] = [
     severity: 'SEV 1',
     tier: 'Tier 1 Enterprise',
     stage: 'Compliance review',
-    owner: 'Amara O.',
+    owner: 'Judith C.',
     nextUpdate: 'countdown',
     revenue: '$210K/mo',
     href: '/incidents/rn-4821',

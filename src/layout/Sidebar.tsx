@@ -91,12 +91,12 @@ export function Sidebar() {
       <div className="border-t border-white/10 px-6 py-5">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-teal/20 text-sm font-semibold text-teal">
-            AO
+            JC
           </div>
           <div>
             <p className="flex items-center gap-1.5 text-sm font-medium text-white">
               <Settings className="h-3.5 w-3.5 shrink-0 text-ice/50" />
-              Amara O.
+              Judith C.
             </p>
             <p className="text-xs text-ice/50">Enterprise Success</p>
             <p className="mt-1 flex items-center gap-1.5 text-[11px] text-ice/50">

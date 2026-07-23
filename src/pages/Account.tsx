@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Badge } from '../components/Badge'
+import { HealthSparkline } from '../components/HealthSparkline'
 import { healthComponents, milestones } from '../data/account'
 
 const HEALTH_SCORE = 42
@@ -47,6 +48,9 @@ export function Account() {
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-3xl font-semibold text-navy tabular-nums">{displayedScore}</span>
             <Badge tone="amber">Orange band</Badge>
+          </div>
+          <div className="mt-3">
+            <HealthSparkline />
           </div>
         </div>
         <div className="rounded-2xl border border-navy/10 bg-white p-5 shadow-sm">

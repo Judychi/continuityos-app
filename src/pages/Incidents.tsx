@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Badge } from '../components/Badge'
-import { PulsingDot } from '../components/PulsingDot'
+import { SyncStatus } from '../components/SyncStatus'
 import { Countdown } from '../components/Countdown'
 import { Toast } from '../components/Toast'
 import { ActivityTicker } from '../components/ActivityTicker'
@@ -34,9 +34,13 @@ function StageCell({ stage }: { stage: string }) {
   )
 }
 
-function NextUpdateCell({ value }: { value: string }) {
-  if (value === 'countdown') {
-    return <span className="font-medium text-navy tabular-nums"><Countdown initialSeconds={3 * 3600 + 12 * 60} /></span>
+function NextUpdateCell({ value, countdownTarget }: { value: string; countdownTarget?: Date }) {
+  if (value === 'countdown' && countdownTarget) {
+    return (
+      <span className="font-medium text-navy tabular-nums">
+        <Countdown target={countdownTarget} />
+      </span>
+    )
   }
   if (value === 'missed') {
     return <span className="font-semibold text-red">Missed · escalated</span>
@@ -46,9 +50,21 @@ function NextUpdateCell({ value }: { value: string }) {
 
 const columns = ['Account', 'Severity', 'Tier', 'Stage', 'Owner', 'Next update due', 'Revenue at risk']
 
+function parseRevenueK(revenue: string): number {
+  const match = revenue.match(/\$(\d+(?:\.\d+)?)K/)
+  return match ? Number(match[1]) : 0
+}
+
 export function Incidents() {
   const navigate = useNavigate()
   const [toastVisible, setToastVisible] = useState(false)
+  const [peopleGridDueTarget] = useState(() => new Date(Date.now() + (3 * 3600 + 12 * 60) * 1000))
+
+  const totalAccounts = incidentRows.length
+  const resolvedCount = incidentRows.filter((row) => row.severity === 'Closed').length
+  const openCount = totalAccounts - resolvedCount
+  const escalationCount = incidentRows.filter((row) => row.nextUpdate === 'missed').length
+  const revenueAtRiskK = incidentRows.reduce((sum, row) => sum + parseRevenueK(row.revenue), 0)
 
   useEffect(() => {
     const showTimer = setTimeout(() => setToastVisible(true), 4000)
@@ -64,13 +80,14 @@ export function Incidents() {
       <Toast message="⚠ Crestline Logistics: update now overdue — auto-escalated" visible={toastVisible} />
 
       <div>
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           <h1 className="text-2xl font-semibold text-navy">Incident Success Room</h1>
-          <PulsingDot />
+          <SyncStatus />
         </div>
         <p className="mt-1.5 text-sm text-navy/60">
-          13 enterprise/business accounts · 8 resolved · 4 open · 1 escalation ·{' '}
-          <span className="font-medium text-navy">$327K/mo at risk</span>
+          {totalAccounts} enterprise/business accounts · {resolvedCount} resolved · {openCount} open ·{' '}
+          {escalationCount} escalation{escalationCount === 1 ? '' : 's'} ·{' '}
+          <span className="font-medium text-navy">${revenueAtRiskK}K/mo at risk</span>
         </p>
       </div>
 
@@ -114,7 +131,7 @@ export function Incidents() {
                   </td>
                   <td className="whitespace-nowrap px-5 py-4 text-navy/70">{row.owner}</td>
                   <td className="whitespace-nowrap px-5 py-4">
-                    <NextUpdateCell value={row.nextUpdate} />
+                    <NextUpdateCell value={row.nextUpdate} countdownTarget={peopleGridDueTarget} />
                   </td>
                   <td className="whitespace-nowrap px-5 py-4">
                     {row.href ? (
