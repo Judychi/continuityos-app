@@ -1,16 +1,19 @@
+import type { CaseStatus } from '../context/CaseContext'
+
 export type StepState = 'done' | 'current' | 'pending'
 
-export function getSteps(caseResolved: boolean): { label: string; state: StepState }[] {
+export function getSteps(status: CaseStatus): { label: string; state: StepState }[] {
+  const pastCompliance = status !== 'OPEN'
   return [
     { label: 'Case received', state: 'done' },
     { label: 'Documents confirmed', state: 'done' },
-    { label: 'Compliance review', state: caseResolved ? 'done' : 'current' },
-    { label: 'Decision & release', state: caseResolved ? 'done' : 'pending' },
+    { label: 'Compliance review', state: pastCompliance ? 'done' : 'current' },
+    { label: 'Decision & release', state: pastCompliance ? 'done' : 'pending' },
   ]
 }
 
-export function getStageLabel(caseResolved: boolean) {
-  return caseResolved ? 'Stage 4 of 4' : 'Stage 3 of 4'
+export function getStageLabel(status: CaseStatus) {
+  return status !== 'OPEN' ? 'Stage 4 of 4' : 'Stage 3 of 4'
 }
 
 export const documents = [
@@ -43,8 +46,8 @@ const resolutionEntry = {
   detail: 'Compliance review completed. Resolution letter generated and sent to client — awaiting customer confirmation.',
 }
 
-export function getHistory(caseResolved: boolean) {
-  return caseResolved ? [...baseHistory, resolutionEntry] : baseHistory
+export function getHistory(status: CaseStatus) {
+  return status !== 'OPEN' ? [...baseHistory, resolutionEntry] : baseHistory
 }
 
 export const resolutionLetter = {

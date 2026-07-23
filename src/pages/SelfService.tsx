@@ -123,7 +123,7 @@ export function SelfService() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-navy/40">Your case</p>
                 <p className="mt-1 text-lg font-semibold text-navy">Case #{submittedCaseNumber}</p>
               </div>
-              <Badge tone="purple">SEV 3 · Self-serve</Badge>
+              <Badge tone="purple" variant="solid">SEV 3 · Self-serve</Badge>
             </div>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">

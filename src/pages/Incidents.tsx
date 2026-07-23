@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Badge } from '../components/Badge'
 import { SyncStatus } from '../components/SyncStatus'
@@ -6,23 +6,49 @@ import { TeamPresence } from '../components/TeamPresence'
 import { Countdown } from '../components/Countdown'
 import { Toast } from '../components/Toast'
 import { ActivityTicker } from '../components/ActivityTicker'
+import { useCase } from '../context/CaseContext'
 import { incidentRows, selfServeRows } from '../data/incidents'
+import { formatFriendlyDate } from '../utils/date'
 
 function SeverityBadge({ severity }: { severity: string }) {
-  if (severity === 'Closed') return <Badge tone="green">Closed — Confirmed</Badge>
+  if (severity === 'Closed') return (
+    <Badge tone="green" variant="solid">
+      Closed — Confirmed
+    </Badge>
+  )
   if (severity === 'SEV 1') return (
-    <Badge tone="red" className="animate-[gentle-pulse_2s_ease-in-out_infinite]">
+    <Badge tone="red" variant="solid" className="animate-[gentle-pulse_2s_ease-in-out_infinite]">
       SEV 1
     </Badge>
   )
-  if (severity === 'SEV 2') return <Badge tone="amber">SEV 2</Badge>
-  return <Badge tone="purple">SEV 3</Badge>
+  if (severity === 'SEV 2') return (
+    <Badge tone="amber" variant="solid">
+      SEV 2
+    </Badge>
+  )
+  return (
+    <Badge tone="purple" variant="solid">
+      SEV 3
+    </Badge>
+  )
 }
 
 function TierBadge({ tier }: { tier: string }) {
-  if (tier === 'Tier 1 Enterprise') return <Badge tone="navy">Tier 1 Enterprise</Badge>
-  if (tier === 'Tier 2 Business') return <Badge tone="slate">Tier 2 Business</Badge>
-  return <Badge tone="purple">Tier 3</Badge>
+  if (tier === 'Tier 1 Enterprise') return (
+    <Badge tone="navy" variant="solid">
+      Tier 1 Enterprise
+    </Badge>
+  )
+  if (tier === 'Tier 2 Business') return (
+    <Badge tone="teal" variant="solid">
+      Tier 2 Business
+    </Badge>
+  )
+  return (
+    <Badge tone="grey" variant="solid">
+      Tier 3
+    </Badge>
+  )
 }
 
 function StageCell({ stage }: { stage: string }) {
@@ -58,8 +84,10 @@ function parseRevenueK(revenue: string): number {
 
 export function Incidents() {
   const navigate = useNavigate()
+  const { caseStatus } = useCase()
   const [toastVisible, setToastVisible] = useState(false)
   const [peopleGridDueTarget] = useState(() => new Date(Date.now() + (3 * 3600 + 12 * 60) * 1000))
+  const resolutionDate = useMemo(() => formatFriendlyDate(new Date()), [])
 
   const totalAccounts = incidentRows.length
   const resolvedCount = incidentRows.filter((row) => row.severity === 'Closed').length
@@ -109,44 +137,67 @@ export function Incidents() {
               </tr>
             </thead>
             <tbody>
-              {incidentRows.map((row) => (
-                <tr
-                  key={row.account}
-                  onClick={() => row.href && navigate(row.href)}
-                  className={`relative border-b border-navy/5 shadow-[0_0_0_rgba(0,0,0,0)] transition-all duration-150 last:border-0 hover:z-10 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(31,58,95,0.14)] ${
-                    row.href ? 'cursor-pointer hover:bg-teal/5' : 'hover:bg-ice/40'
-                  }`}
-                >
-                  <td className="whitespace-nowrap px-5 py-4">
-                    <div className="flex flex-col">
-                      <span className="font-medium text-navy">{row.account}</span>
-                      <span className="text-xs text-navy/40">#{row.caseId}</span>
-                    </div>
-                  </td>
-                  <td className="px-5 py-4">
-                    <SeverityBadge severity={row.severity} />
-                  </td>
-                  <td className="whitespace-nowrap px-5 py-4">
-                    <TierBadge tier={row.tier} />
-                  </td>
-                  <td className="whitespace-nowrap px-5 py-4">
-                    <StageCell stage={row.stage} />
-                  </td>
-                  <td className="whitespace-nowrap px-5 py-4 text-navy/70">{row.owner}</td>
-                  <td className="whitespace-nowrap px-5 py-4">
-                    <NextUpdateCell value={row.nextUpdate} countdownTarget={peopleGridDueTarget} />
-                  </td>
-                  <td className="whitespace-nowrap px-5 py-4">
-                    {row.href ? (
-                      <span className="font-semibold text-teal underline decoration-teal/30 underline-offset-2">
-                        {row.revenue}
-                      </span>
-                    ) : (
-                      <span className="text-navy/70">{row.revenue}</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {incidentRows.map((row) => {
+                const isPeopleGrid = row.account === 'PeopleGrid Africa'
+                const displayStage =
+                  isPeopleGrid && caseStatus === 'AWAITING_CONFIRMATION'
+                    ? 'Resolution Drafted'
+                    : isPeopleGrid && caseStatus === 'CLOSED_CONFIRMED'
+                      ? 'Closed — Confirmed'
+                      : row.stage
+                const displayNextUpdate =
+                  isPeopleGrid && caseStatus === 'AWAITING_CONFIRMATION'
+                    ? 'Awaiting customer confirmation'
+                    : isPeopleGrid && caseStatus === 'CLOSED_CONFIRMED'
+                      ? resolutionDate
+                      : row.nextUpdate
+                const showClosedStageBadge = isPeopleGrid && caseStatus === 'CLOSED_CONFIRMED'
+
+                return (
+                  <tr
+                    key={row.account}
+                    onClick={() => row.href && navigate(row.href)}
+                    className={`relative border-b border-navy/5 shadow-[0_0_0_rgba(0,0,0,0)] transition-all duration-150 last:border-0 hover:z-10 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(31,58,95,0.14)] ${
+                      row.href ? 'cursor-pointer hover:bg-teal/5' : 'hover:bg-ice/40'
+                    }`}
+                  >
+                    <td className="whitespace-nowrap px-5 py-4">
+                      <div className="flex flex-col">
+                        <span className="font-medium text-navy">{row.account}</span>
+                        <span className="text-xs text-navy/40">#{row.caseId}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4">
+                      <SeverityBadge severity={row.severity} />
+                    </td>
+                    <td className="whitespace-nowrap px-5 py-4">
+                      <TierBadge tier={row.tier} />
+                    </td>
+                    <td className="whitespace-nowrap px-5 py-4">
+                      {showClosedStageBadge ? (
+                        <Badge tone="green" variant="solid">
+                          Closed — Confirmed
+                        </Badge>
+                      ) : (
+                        <StageCell stage={displayStage} />
+                      )}
+                    </td>
+                    <td className="whitespace-nowrap px-5 py-4 text-navy/70">{row.owner}</td>
+                    <td className="whitespace-nowrap px-5 py-4">
+                      <NextUpdateCell value={displayNextUpdate} countdownTarget={peopleGridDueTarget} />
+                    </td>
+                    <td className="whitespace-nowrap px-5 py-4">
+                      {row.href ? (
+                        <span className="font-semibold text-teal underline decoration-teal/30 underline-offset-2">
+                          {row.revenue}
+                        </span>
+                      ) : (
+                        <span className="text-navy/70">{row.revenue}</span>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>

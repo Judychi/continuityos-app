@@ -1,34 +1,39 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 
-const STORAGE_KEY = 'continuityos.caseResolved'
+export type CaseStatus = 'OPEN' | 'AWAITING_CONFIRMATION' | 'CLOSED_CONFIRMED'
+
+const STORAGE_KEY = 'continuityos.caseStatus'
+const VALID_STATUSES: CaseStatus[] = ['OPEN', 'AWAITING_CONFIRMATION', 'CLOSED_CONFIRMED']
 
 type CaseContextValue = {
-  caseResolved: boolean
-  setCaseResolved: (value: boolean) => void
+  caseStatus: CaseStatus
+  setCaseStatus: (value: CaseStatus) => void
 }
 
 const CaseContext = createContext<CaseContextValue | undefined>(undefined)
 
-function readInitial(): boolean {
+function readInitial(): CaseStatus {
   try {
-    return window.localStorage.getItem(STORAGE_KEY) === 'true'
+    const stored = window.localStorage.getItem(STORAGE_KEY)
+    if (stored && (VALID_STATUSES as string[]).includes(stored)) return stored as CaseStatus
+    return 'OPEN'
   } catch {
-    return false
+    return 'OPEN'
   }
 }
 
 export function CaseProvider({ children }: { children: ReactNode }) {
-  const [caseResolved, setCaseResolved] = useState<boolean>(readInitial)
+  const [caseStatus, setCaseStatus] = useState<CaseStatus>(readInitial)
 
   useEffect(() => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, String(caseResolved))
+      window.localStorage.setItem(STORAGE_KEY, caseStatus)
     } catch {
       // localStorage unavailable (e.g. private browsing) — state still works in-memory
     }
-  }, [caseResolved])
+  }, [caseStatus])
 
-  return <CaseContext.Provider value={{ caseResolved, setCaseResolved }}>{children}</CaseContext.Provider>
+  return <CaseContext.Provider value={{ caseStatus, setCaseStatus }}>{children}</CaseContext.Provider>
 }
 
 export function useCase() {

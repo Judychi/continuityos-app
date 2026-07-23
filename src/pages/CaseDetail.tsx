@@ -13,7 +13,7 @@ import { documents, getHistory, getStageLabel, getSteps, resolutionLetter } from
 const sequenceLabels = ['Stage moved', 'Letter generated', 'Sent to client', 'Logged on timeline']
 
 export function CaseDetail() {
-  const { caseResolved, setCaseResolved } = useCase()
+  const { caseStatus, setCaseStatus } = useCase()
   const [isAdvancing, setIsAdvancing] = useState(false)
   const [visibleSteps, setVisibleSteps] = useState(0)
   const [letterOpen, setLetterOpen] = useState(false)
@@ -22,14 +22,14 @@ export function CaseDetail() {
     if (!isAdvancing) return
     if (visibleSteps >= sequenceLabels.length) {
       const timeout = setTimeout(() => {
-        setCaseResolved(true)
+        setCaseStatus('AWAITING_CONFIRMATION')
         setIsAdvancing(false)
       }, 700)
       return () => clearTimeout(timeout)
     }
     const timeout = setTimeout(() => setVisibleSteps((v) => v + 1), 1000)
     return () => clearTimeout(timeout)
-  }, [isAdvancing, visibleSteps, setCaseResolved])
+  }, [isAdvancing, visibleSteps, setCaseStatus])
 
   function handleAdvance() {
     setVisibleSteps(0)
@@ -40,11 +40,11 @@ export function CaseDetail() {
     setIsAdvancing(false)
     setVisibleSteps(0)
     setLetterOpen(false)
-    setCaseResolved(false)
+    setCaseStatus('OPEN')
   }
 
-  const steps = getSteps(caseResolved)
-  const history = getHistory(caseResolved)
+  const steps = getSteps(caseStatus)
+  const history = getHistory(caseStatus)
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -53,7 +53,8 @@ export function CaseDetail() {
           <div className="flex flex-wrap items-center gap-2.5">
             <h1 className="text-2xl font-semibold text-navy">Case #RN-4821 — PeopleGrid Africa</h1>
             <Badge tone="navy">Internal case detail</Badge>
-            {caseResolved && <Badge tone="green">Resolved</Badge>}
+            {caseStatus === 'AWAITING_CONFIRMATION' && <Badge tone="amber">Awaiting Confirmation</Badge>}
+            {caseStatus === 'CLOSED_CONFIRMED' && <Badge tone="green">Closed — Confirmed</Badge>}
             <Link
               to="/status"
               className="inline-flex items-center gap-1.5 rounded-full border border-teal/30 bg-teal/5 px-3 py-1 text-xs font-semibold text-teal transition-colors hover:bg-teal/10"
@@ -69,12 +70,12 @@ export function CaseDetail() {
         <PresenceIndicator />
       </div>
 
-      <CaseProgress steps={steps} stageLabel={getStageLabel(caseResolved)} />
+      <CaseProgress steps={steps} stageLabel={getStageLabel(caseStatus)} />
 
       <div className="rounded-2xl border border-navy/10 bg-white p-6 shadow-sm">
         <p className="mb-4 text-sm font-semibold text-navy">Resolution actions</p>
 
-        {!caseResolved && !isAdvancing && (
+        {caseStatus === 'OPEN' && !isAdvancing && (
           <button
             onClick={handleAdvance}
             className="rounded-xl bg-teal px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal/90"
@@ -108,9 +109,18 @@ export function CaseDetail() {
           </div>
         )}
 
-        {caseResolved && !isAdvancing && (
+        {caseStatus === 'AWAITING_CONFIRMATION' && !isAdvancing && (
           <div className="flex flex-wrap items-center gap-4">
-            <Badge tone="green">Resolution drafted ✓</Badge>
+            <Badge tone="amber">Resolution drafted — awaiting confirmation</Badge>
+            <button onClick={() => setLetterOpen(true)} className="text-sm font-medium text-teal hover:underline">
+              Open letter
+            </button>
+          </div>
+        )}
+
+        {caseStatus === 'CLOSED_CONFIRMED' && !isAdvancing && (
+          <div className="flex flex-wrap items-center gap-4">
+            <Badge tone="green">Closed — Confirmed</Badge>
             <button onClick={() => setLetterOpen(true)} className="text-sm font-medium text-teal hover:underline">
               Open letter
             </button>

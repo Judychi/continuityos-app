@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Badge } from '../components/Badge'
 import { CaseProgress } from '../components/CaseProgress'
 import { DocumentChecklist } from '../components/DocumentChecklist'
@@ -8,74 +8,87 @@ import { ContactModal } from '../components/ContactModal'
 import { useCase } from '../context/CaseContext'
 import { documents, getHistory, getStageLabel, getSteps } from '../data/caseDetail'
 import { csmDirectory } from '../data/csm'
+import { formatFriendlyDate } from '../utils/date'
 
-type ConfirmPhase = 'idle' | 'bursting' | 'confirmed'
+type BurstPhase = 'idle' | 'bursting'
 
 const caseOwner = csmDirectory[0]
 
 export function StatusHub() {
-  const { caseResolved } = useCase()
-  const [confirmPhase, setConfirmPhase] = useState<ConfirmPhase>('idle')
+  const { caseStatus, setCaseStatus } = useCase()
+  const [burstPhase, setBurstPhase] = useState<BurstPhase>('idle')
   const [contactOpen, setContactOpen] = useState(false)
 
-  useEffect(() => {
-    if (!caseResolved) setConfirmPhase('idle')
-  }, [caseResolved])
+  const resolutionDate = useMemo(() => formatFriendlyDate(new Date()), [])
 
   useEffect(() => {
-    if (confirmPhase !== 'bursting') return
-    const timeout = setTimeout(() => setConfirmPhase('confirmed'), 850)
+    if (caseStatus === 'OPEN') setBurstPhase('idle')
+  }, [caseStatus])
+
+  useEffect(() => {
+    if (burstPhase !== 'bursting') return
+    const timeout = setTimeout(() => {
+      setCaseStatus('CLOSED_CONFIRMED')
+      setBurstPhase('idle')
+    }, 850)
     return () => clearTimeout(timeout)
-  }, [confirmPhase])
+  }, [burstPhase, setCaseStatus])
 
-  const steps = getSteps(caseResolved)
-  const currentStage = caseResolved ? 'Resolved — awaiting your confirmation' : 'Compliance review'
+  const steps = getSteps(caseStatus)
+
+  const currentStage =
+    caseStatus === 'CLOSED_CONFIRMED'
+      ? 'Closed — Confirmed'
+      : caseStatus === 'AWAITING_CONFIRMATION'
+        ? 'Resolved — awaiting your confirmation'
+        : 'Compliance review'
 
   // Base timeline entries are always shown oldest→newest from data; display newest-first.
-  const baseHistory = [...getHistory(false)].reverse()
+  const baseHistory = [...getHistory('OPEN')].reverse()
 
-  const historyEntries = caseResolved
-    ? [
-        {
-          timestamp: 'Just now',
-          title: 'Resolution drafted',
-          detail: (
-            <div className="space-y-3">
-              <p>
-                Review complete. Account fully restored. Your resolution letter has been sent — please confirm your
-                key transaction works.
-              </p>
-
-              {confirmPhase === 'idle' && (
-                <button
-                  onClick={() => setConfirmPhase('bursting')}
-                  className="rounded-xl bg-green px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green/90"
-                >
-                  ✓ Confirm — my payroll ran successfully
-                </button>
-              )}
-
-              {confirmPhase === 'bursting' && <ConfettiBurst />}
-
-              {confirmPhase === 'confirmed' && (
-                <p className="flex items-center gap-1.5 font-semibold text-green">
-                  <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2.25}
-                      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                    />
-                  </svg>
-                  Case closed by customer confirmation ✓ · Recovery call scheduled within 48 hours
+  const historyEntries =
+    caseStatus !== 'OPEN'
+      ? [
+          {
+            timestamp: 'Just now',
+            title: 'Resolution drafted',
+            detail: (
+              <div className="space-y-3">
+                <p>
+                  Review complete. Account fully restored. Your resolution letter has been sent — please confirm
+                  your key transaction works.
                 </p>
-              )}
-            </div>
-          ),
-        },
-        ...baseHistory,
-      ]
-    : baseHistory
+
+                {caseStatus === 'AWAITING_CONFIRMATION' && burstPhase === 'idle' && (
+                  <button
+                    onClick={() => setBurstPhase('bursting')}
+                    className="rounded-xl bg-green px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green/90"
+                  >
+                    ✓ Confirm — my payroll ran successfully
+                  </button>
+                )}
+
+                {burstPhase === 'bursting' && <ConfettiBurst />}
+
+                {caseStatus === 'CLOSED_CONFIRMED' && burstPhase === 'idle' && (
+                  <p className="flex items-center gap-1.5 font-semibold text-green">
+                    <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.25}
+                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                      />
+                    </svg>
+                    Case closed by customer confirmation ✓ · Recovery call scheduled within 48 hours
+                  </p>
+                )}
+              </div>
+            ),
+          },
+          ...baseHistory,
+        ]
+      : baseHistory
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -87,20 +100,26 @@ export function StatusHub() {
         <p className="mt-1.5 text-sm text-navy/60">Track the live progress of your compliance case.</p>
       </div>
 
-      <CaseProgress steps={steps} stageLabel={getStageLabel(caseResolved)} />
+      <CaseProgress steps={steps} stageLabel={getStageLabel(caseStatus)} />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-navy/10 bg-white p-5 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wide text-navy/40">Current stage</p>
-          <p className={`mt-1.5 flex items-center gap-1.5 text-sm font-semibold ${caseResolved ? 'text-navy' : 'text-amber'}`}>
-            {!caseResolved && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber" />}
+          <p
+            className={`mt-1.5 flex items-center gap-1.5 text-sm font-semibold ${
+              caseStatus === 'CLOSED_CONFIRMED' ? 'text-green' : caseStatus === 'AWAITING_CONFIRMATION' ? 'text-navy' : 'text-amber'
+            }`}
+          >
+            {caseStatus === 'OPEN' && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber" />}
             {currentStage}
           </p>
         </div>
         <div className="rounded-2xl border border-navy/10 bg-white p-5 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wide text-navy/40">Next update</p>
-          {caseResolved ? (
-            <p className="mt-1.5 text-sm font-semibold text-navy">None — case resolved</p>
+          {caseStatus === 'CLOSED_CONFIRMED' ? (
+            <p className="mt-1.5 text-sm font-semibold text-navy">Resolved {resolutionDate}</p>
+          ) : caseStatus === 'AWAITING_CONFIRMATION' ? (
+            <p className="mt-1.5 text-sm font-semibold text-navy">Awaiting customer confirmation</p>
           ) : (
             <>
               <p className="mt-1.5 text-sm font-semibold text-navy">Thursday 2:00 PM</p>
