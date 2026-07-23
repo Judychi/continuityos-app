@@ -1,4 +1,6 @@
-type HistoryEntry = { timestamp: string; title: string; detail: string }
+import type { ReactNode } from 'react'
+
+type HistoryEntry = { timestamp: string; title: string; detail: ReactNode }
 
 export function UpdateHistory({ entries }: { entries: HistoryEntry[] }) {
   return (
@@ -11,10 +13,10 @@ export function UpdateHistory({ entries }: { entries: HistoryEntry[] }) {
               <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-teal" />
               <span className="mt-1 w-px flex-1 bg-navy/10" />
             </div>
-            <div className="pb-1">
+            <div className="flex-1 pb-1">
               <p className="text-xs font-medium text-navy/40">{entry.timestamp}</p>
               <p className="mt-0.5 text-sm font-semibold text-navy">{entry.title}</p>
-              <p className="mt-0.5 text-sm text-navy/60">{entry.detail}</p>
+              <div className="mt-0.5 text-sm text-navy/60">{entry.detail}</div>
             </div>
           </li>
         ))}

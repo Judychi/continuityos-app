@@ -171,34 +171,6 @@ function AccountSkeleton() {
   )
 }
 
-function ContactSkeleton() {
-  return (
-    <div className="mx-auto max-w-2xl animate-pulse space-y-6">
-      <div className="space-y-2">
-        <Block className="h-7 w-56 rounded-md" />
-        <Block className="h-4 w-72 rounded-md" />
-      </div>
-
-      <div className="space-y-3 rounded-2xl border border-navy/10 bg-white p-6 shadow-sm">
-        <div className="flex items-center gap-3">
-          <Block className="h-12 w-12 rounded-full" />
-          <div className="space-y-1.5">
-            <Block className="h-4 w-24 rounded-md" />
-            <Block className="h-3 w-32 rounded-md" />
-          </div>
-        </div>
-        <Block className="h-3 w-56 rounded-md" />
-      </div>
-
-      <div className="space-y-4 rounded-2xl border border-navy/10 bg-white p-6 shadow-sm">
-        <Block className="h-9 w-full rounded-xl" />
-        <Block className="h-28 w-full rounded-xl" />
-        <Block className="h-10 w-32 rounded-xl" />
-      </div>
-    </div>
-  )
-}
-
 function SelfServiceSkeleton() {
   return (
     <div className="mx-auto max-w-3xl animate-pulse space-y-6">
@@ -208,13 +180,19 @@ function SelfServiceSkeleton() {
       </div>
 
       <div className="space-y-4 rounded-2xl border border-navy/10 bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <Block className="h-5 w-32 rounded-md" />
-          <Block className="h-5 w-24 rounded-full" />
+        <Block className="h-4 w-48 rounded-md" />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Block key={i} className="h-20 w-full rounded-2xl" />
+          ))}
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Block className="h-10 w-full rounded-md" />
-          <Block className="h-10 w-full rounded-md" />
+      </div>
+
+      <div className="space-y-4 rounded-2xl border border-navy/10 bg-white p-6 shadow-sm">
+        <Block className="h-4 w-56 rounded-md" />
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Block className="h-10 flex-1 rounded-xl" />
+          <Block className="h-10 w-32 rounded-xl" />
         </div>
       </div>
 
@@ -224,8 +202,6 @@ function SelfServiceSkeleton() {
           <Block key={i} className="h-9 w-full rounded-md" />
         ))}
       </div>
-
-      <Block className="h-24 w-full rounded-2xl" />
     </div>
   )
 }
@@ -245,7 +221,6 @@ export function PageSkeleton({ pathname }: { pathname: string }) {
   if (pathname === '/status') return <StatusHubSkeleton />
   if (pathname === '/account') return <AccountSkeleton />
   if (pathname === '/incidents/rn-4821') return <CaseDetailSkeleton />
-  if (pathname === '/contact') return <ContactSkeleton />
   if (pathname === '/self-service') return <SelfServiceSkeleton />
   return <DefaultSkeleton />
 }

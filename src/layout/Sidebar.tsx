@@ -1,7 +1,9 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import { Settings, MessageCircle, LifeBuoy } from 'lucide-react'
+import { Settings, MessageCircle, LifeBuoy, ChevronDown } from 'lucide-react'
 import { PulsingDot } from '../components/PulsingDot'
+import { ContactModal } from '../components/ContactModal'
+import { csmDirectory, type Csm } from '../data/csm'
 
 type NavItem = { to: string; label: string; tag: string; renderIcon: (className: string) => ReactNode }
 
@@ -51,12 +53,6 @@ const primaryNavItems: NavItem[] = [
       </svg>
     ),
   },
-  {
-    to: '/contact',
-    label: 'Contact Your CSM',
-    tag: 'Reach Judith C.',
-    renderIcon: (className) => <MessageCircle className={className} strokeWidth={1.75} />,
-  },
 ]
 
 const secondaryNavItems: NavItem[] = [
@@ -91,6 +87,58 @@ function SidebarNavLink({ item }: { item: NavItem }) {
   )
 }
 
+function CsmDirectory() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedCsm, setSelectedCsm] = useState<Csm>(csmDirectory[0])
+
+  function handleMessage(csm: Csm) {
+    setSelectedCsm(csm)
+    setModalOpen(true)
+  }
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setIsOpen((o) => !o)}
+        className={`group flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors ${
+          isOpen ? 'bg-white/10 text-white' : 'text-ice/70 hover:bg-white/5 hover:text-white'
+        }`}
+      >
+        <MessageCircle
+          className={`h-5 w-5 shrink-0 ${isOpen ? 'text-teal' : 'text-ice/50 group-hover:text-teal'}`}
+          strokeWidth={1.75}
+        />
+        <span className="flex-1 text-sm font-medium leading-tight">Contact Your CSM</span>
+        <ChevronDown className={`h-4 w-4 shrink-0 text-ice/40 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <div className="mt-1 space-y-1 rounded-xl bg-white/5 p-2">
+          {csmDirectory.map((csm) => (
+            <div key={csm.name} className="flex items-center justify-between gap-2 rounded-lg px-2 py-2">
+              <div className="min-w-0">
+                <p className="truncate text-xs font-medium text-white">{csm.name}</p>
+                <p className="truncate text-[11px] text-ice/50">{csm.role}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleMessage(csm)}
+                className="shrink-0 rounded-lg bg-teal/20 px-2.5 py-1 text-[11px] font-semibold text-teal transition-colors hover:bg-teal/30"
+              >
+                Message
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <ContactModal open={modalOpen} onClose={() => setModalOpen(false)} recipient={selectedCsm} />
+    </div>
+  )
+}
+
 export function Sidebar() {
   return (
     <aside className="flex min-h-screen w-72 shrink-0 flex-col bg-navy text-ice">
@@ -108,6 +156,8 @@ export function Sidebar() {
         {primaryNavItems.map((item) => (
           <SidebarNavLink key={item.to} item={item} />
         ))}
+
+        <CsmDirectory />
 
         <p className="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wide text-ice/50">
           Individual / Tier 3
