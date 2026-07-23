@@ -21,24 +21,24 @@ export const documents = [
 
 const baseHistory = [
   {
-    timestamp: 'Mon, Jul 20 · 9:14 AM',
+    timestamp: 'Mon, Jul 27 · 9:14 AM',
     title: 'Case received',
     detail: 'RN-4821 opened for PeopleGrid Africa. Initial document request sent to client.',
   },
   {
-    timestamp: 'Mon, Jul 20 · 4:52 PM',
+    timestamp: 'Mon, Jul 27 · 4:52 PM',
     title: 'Documents confirmed',
     detail: 'Certificate of incorporation and client payment contract received and verified.',
   },
   {
-    timestamp: 'Wed, Jul 22 · 10:05 AM',
+    timestamp: 'Wed, Jul 29 · 10:05 AM',
     title: 'Compliance review started',
     detail: 'Source-of-funds statement moved to compliance for review. Judith C. assigned as case owner.',
   },
 ]
 
 const resolutionEntry = {
-  timestamp: 'Wed, Jul 22 · 2:14 PM',
+  timestamp: 'Wed, Jul 29 · 2:14 PM',
   title: 'Resolution drafted',
   detail: 'Compliance review completed. Resolution letter generated and sent to client — awaiting customer confirmation.',
 }
@@ -48,7 +48,7 @@ export function getHistory(caseResolved: boolean) {
 }
 
 export const resolutionLetter = {
-  date: 'July 22, 2026',
+  date: 'July 29, 2026',
   caseId: 'RN-4821',
   recipient: 'PeopleGrid Africa',
   body: [

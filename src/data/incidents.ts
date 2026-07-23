@@ -39,7 +39,7 @@ export const incidentRows: IncidentRow[] = [
     tier: 'Tier 2 Business',
     stage: 'Decision & release',
     owner: 'Kemi B.',
-    nextUpdate: 'Thu, Jul 23 · 10:00 AM',
+    nextUpdate: 'Tue, Jul 28 · 10:00 AM',
     revenue: '$32K/mo',
   },
   {

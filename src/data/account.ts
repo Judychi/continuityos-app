@@ -153,7 +153,7 @@ export const accountProfiles: Record<string, AccountProfile> = {
     ],
     milestones: genericMilestones,
     sparkline: [80, 81, 83, 84, 85, 86, 86, 87, 87, 88, 88, 88, 88, 88],
-    nextReview: { kind: 'completed', date: 'Wed, Jul 15' },
+    nextReview: { kind: 'completed', date: 'Wed, Aug 5' },
   },
 
   'Lagos Creative Agency': {
@@ -177,7 +177,7 @@ export const accountProfiles: Record<string, AccountProfile> = {
     ],
     milestones: genericMilestones,
     sparkline: [76, 77, 78, 79, 80, 81, 82, 82, 83, 83, 84, 84, 84, 84],
-    nextReview: { kind: 'completed', date: 'Fri, Jul 10' },
+    nextReview: { kind: 'completed', date: 'Fri, Jul 31' },
   },
 
   'Accra Exports Co': {
@@ -201,7 +201,7 @@ export const accountProfiles: Record<string, AccountProfile> = {
     ],
     milestones: genericMilestones,
     sparkline: [84, 85, 86, 87, 88, 88, 89, 89, 90, 90, 91, 91, 91, 91],
-    nextReview: { kind: 'completed', date: 'Mon, Jul 20' },
+    nextReview: { kind: 'completed', date: 'Mon, Aug 10' },
   },
 
   'Kigali Tech Studio': {
@@ -225,7 +225,7 @@ export const accountProfiles: Record<string, AccountProfile> = {
     ],
     milestones: genericMilestones,
     sparkline: [72, 73, 74, 75, 76, 77, 77, 78, 78, 79, 79, 80, 80, 80],
-    nextReview: { kind: 'completed', date: 'Wed, Jul 8' },
+    nextReview: { kind: 'completed', date: 'Wed, Jul 29' },
   },
 
   'Nairobi Freight Ltd': {
@@ -249,7 +249,7 @@ export const accountProfiles: Record<string, AccountProfile> = {
     ],
     milestones: genericMilestones,
     sparkline: [78, 79, 80, 81, 82, 83, 84, 84, 85, 85, 86, 86, 86, 86],
-    nextReview: { kind: 'completed', date: 'Tue, Jul 14' },
+    nextReview: { kind: 'completed', date: 'Tue, Aug 4' },
   },
 
   'Ibadan Payroll Services': {
@@ -273,7 +273,7 @@ export const accountProfiles: Record<string, AccountProfile> = {
     ],
     milestones: genericMilestones,
     sparkline: [82, 83, 84, 85, 86, 87, 87, 88, 88, 89, 89, 90, 90, 90],
-    nextReview: { kind: 'completed', date: 'Thu, Jul 16' },
+    nextReview: { kind: 'completed', date: 'Thu, Aug 6' },
   },
 
   'Kumasi Media Group': {
@@ -297,6 +297,6 @@ export const accountProfiles: Record<string, AccountProfile> = {
     ],
     milestones: genericMilestones,
     sparkline: [75, 76, 77, 78, 79, 80, 80, 81, 81, 82, 82, 83, 83, 83],
-    nextReview: { kind: 'completed', date: 'Thu, Jul 9' },
+    nextReview: { kind: 'completed', date: 'Thu, Jul 30' },
   },
 }
