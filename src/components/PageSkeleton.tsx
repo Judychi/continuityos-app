@@ -137,9 +137,10 @@ function CaseDetailSkeleton() {
 function AccountSkeleton() {
   return (
     <div className="mx-auto max-w-5xl animate-pulse space-y-6">
-      <div className="space-y-2">
+      <div className="space-y-3">
         <Block className="h-7 w-56 rounded-md" />
-        <Block className="h-4 w-64 rounded-md" />
+        <Block className="h-10 w-64 rounded-xl" />
+        <Block className="h-4 w-48 rounded-md" />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -149,6 +150,11 @@ function AccountSkeleton() {
             <Block className="h-7 w-16 rounded-md" />
           </div>
         ))}
+      </div>
+
+      <div className="space-y-2 rounded-2xl border border-navy/10 bg-white p-5 shadow-sm">
+        <Block className="h-3 w-40 rounded-md" />
+        <Block className="h-4 w-48 rounded-md" />
       </div>
 
       <div className="space-y-4 rounded-2xl border border-navy/10 bg-white p-6 shadow-sm">

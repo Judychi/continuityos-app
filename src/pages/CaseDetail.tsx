@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ExternalLink } from 'lucide-react'
 import { Badge } from '../components/Badge'
 import { Modal } from '../components/Modal'
 import { PresenceIndicator } from '../components/PresenceIndicator'
@@ -53,6 +54,13 @@ export function CaseDetail() {
             <h1 className="text-2xl font-semibold text-navy">Case #RN-4821 — PeopleGrid Africa</h1>
             <Badge tone="navy">Internal case detail</Badge>
             {caseResolved && <Badge tone="green">Resolved</Badge>}
+            <Link
+              to="/status"
+              className="inline-flex items-center gap-1.5 rounded-full border border-teal/30 bg-teal/5 px-3 py-1 text-xs font-semibold text-teal transition-colors hover:bg-teal/10"
+            >
+              View Customer Hub
+              <ExternalLink className="h-3.5 w-3.5" strokeWidth={2} />
+            </Link>
           </div>
           <Link to="/incidents" className="mt-1.5 inline-block text-sm text-teal hover:underline">
             ← Back to Incident Success Room

@@ -1,9 +1,12 @@
 import { useRef, useState, type FormEvent } from 'react'
-import { Clock, FileText, ShieldAlert, HelpCircle, Search } from 'lucide-react'
+import { Clock, FileText, ShieldAlert, HelpCircle, Search, MessageCircle } from 'lucide-react'
 import { Badge } from '../components/Badge'
 import { Modal } from '../components/Modal'
 import { Toast } from '../components/Toast'
+import { SupportContactModal } from '../components/SupportContactModal'
 import { faqs, issueTypes } from '../data/selfService'
+
+const SUPPORT_FAQ_QUESTION = 'Can I talk to a real person?'
 
 const helpOptions = [
   { label: 'Payment delayed', icon: Clock, action: 'scroll' as const },
@@ -17,6 +20,7 @@ export function SelfService() {
 
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null)
   const [requestOpen, setRequestOpen] = useState(false)
+  const [supportOpen, setSupportOpen] = useState(false)
   const [issueType, setIssueType] = useState(issueTypes[0])
   const [description, setDescription] = useState('')
   const [toastVisible, setToastVisible] = useState(false)
@@ -162,12 +166,33 @@ export function SelfService() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                   </svg>
                 </button>
-                {isOpen && <p className="pb-4 text-sm text-navy/60">{faq.answer}</p>}
+                {isOpen && (
+                  <div className="pb-4">
+                    <p className="text-sm text-navy/60">{faq.answer}</p>
+                    {faq.question === SUPPORT_FAQ_QUESTION && (
+                      <button
+                        type="button"
+                        onClick={() => setSupportOpen(true)}
+                        className="mt-3 inline-flex items-center gap-2 rounded-xl bg-teal px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal/90"
+                      >
+                        <MessageCircle className="h-4 w-4" strokeWidth={2} />
+                        Contact Support
+                      </button>
+                    )}
+                  </div>
+                )}
               </li>
             )
           })}
         </ul>
       </div>
+
+      <p className="text-center text-sm text-navy/50">
+        Still stuck?{' '}
+        <button type="button" onClick={() => setSupportOpen(true)} className="font-medium text-teal hover:underline">
+          Contact Support
+        </button>
+      </p>
 
       <Modal open={requestOpen} onClose={() => setRequestOpen(false)}>
         <form onSubmit={handleSubmitRequest} className="rounded-2xl bg-white p-6 shadow-2xl">
@@ -225,6 +250,8 @@ export function SelfService() {
           </div>
         </form>
       </Modal>
+
+      <SupportContactModal open={supportOpen} onClose={() => setSupportOpen(false)} />
     </div>
   )
 }

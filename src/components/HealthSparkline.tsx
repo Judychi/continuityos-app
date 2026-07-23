@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 
-const HISTORY = [68, 65, 61, 55, 47, 39, 34, 33, 35, 37, 38, 39, 40, 42]
-
 const VIEW_WIDTH = 120
 const VIEW_HEIGHT = 32
 const PADDING_Y = 4
@@ -16,11 +14,12 @@ function buildPoints(data: number[]) {
   }))
 }
 
-export function HealthSparkline() {
+export function HealthSparkline({ history }: { history: number[] }) {
   const pathRef = useRef<SVGPathElement>(null)
+  const hasMountedRef = useRef(false)
   const [isDrawn, setIsDrawn] = useState(false)
 
-  const points = buildPoints(HISTORY)
+  const points = buildPoints(history)
   const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ')
   const lastPoint = points[points.length - 1]
 
@@ -29,19 +28,29 @@ export function HealthSparkline() {
     if (!path) return
 
     const length = path.getTotalLength()
-    path.style.strokeDasharray = `${length}`
-    path.style.strokeDashoffset = `${length}`
-    path.style.transition = 'none'
-    // Force a layout flush so the hidden state paints before the transition starts.
-    path.getBoundingClientRect()
 
-    const frame = requestAnimationFrame(() => {
-      path.style.transition = 'stroke-dashoffset 1000ms ease-out'
-      path.style.strokeDashoffset = '0'
-      setIsDrawn(true)
-    })
-    return () => cancelAnimationFrame(frame)
-  }, [])
+    if (!hasMountedRef.current) {
+      // First mount: draw the line in from left to right.
+      hasMountedRef.current = true
+      path.style.strokeDasharray = `${length}`
+      path.style.strokeDashoffset = `${length}`
+      path.style.transition = 'none'
+      // Force a layout flush so the hidden state paints before the transition starts.
+      path.getBoundingClientRect()
+
+      const frame = requestAnimationFrame(() => {
+        path.style.transition = 'stroke-dashoffset 1000ms ease-out'
+        path.style.strokeDashoffset = '0'
+        setIsDrawn(true)
+      })
+      return () => cancelAnimationFrame(frame)
+    }
+
+    // Subsequent data changes (e.g. switching accounts): update instantly, no replay.
+    path.style.transition = 'none'
+    path.style.strokeDasharray = `${length}`
+    path.style.strokeDashoffset = '0'
+  }, [history])
 
   return (
     <div>

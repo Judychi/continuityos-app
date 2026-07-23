@@ -11,8 +11,7 @@ export const faqs = [
   },
   {
     question: 'Can I talk to a real person?',
-    answer:
-      'Self-serve cases are handled by automation first. If yours needs a closer look, submit a request below and a CSM will be looped in.',
+    answer: "Yes — if self-service doesn't resolve it, our support team typically responds within 24 hours.",
   },
   {
     question: 'How do I check my case status?',
